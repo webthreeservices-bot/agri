@@ -3,6 +3,7 @@ import { type User, type InsertUser, type LoginRequest } from "@shared/schema";
 import { ethers } from "ethers";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/queryClient";
 
 declare global {
   interface Window {
@@ -21,7 +22,7 @@ export function useAuth() {
     queryKey: ["/api/user/me"],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/user/me", {
+        const res = await fetch(`${API_BASE_URL}/api/user/me`, {
           headers: {
             "Accept": "application/json"
           }
@@ -42,7 +43,7 @@ export function useAuth() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginRequest) => {
-      const res = await fetch("/api/login", {
+      const res = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +135,7 @@ export function useAuth() {
       } catch (loginErr: any) {
         if (loginErr.message === "User not found") {
           // If login fails because user not found, try to register
-          const res = await fetch("/api/register", {
+          const res = await fetch(`${API_BASE_URL}/api/register`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -179,7 +180,7 @@ export function useAuth() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await fetch("/api/auth/logout", {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
       });
     },

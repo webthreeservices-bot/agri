@@ -19,7 +19,7 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "https://agri-096l.onrender.com";
 
 export async function apiRequest(
   method: string,
@@ -45,27 +45,27 @@ export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
-  async ({ queryKey }) => {
-    const url = queryKey.join("/") as string;
-    const res = await fetch(url.startsWith("/") ? `${API_BASE_URL}${url}` : url, {
-      headers: {
-        "Accept": "application/json"
-      },
-      credentials: "include",
-    });
+    async ({ queryKey }) => {
+      const url = queryKey.join("/") as string;
+      const res = await fetch(url.startsWith("/") ? `${API_BASE_URL}${url}` : url, {
+        headers: {
+          "Accept": "application/json"
+        },
+        credentials: "include",
+      });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
-    }
+      if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+        return null;
+      }
 
-    await throwIfResNotOk(res);
-    
-    const contentType = res.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      return await res.json();
-    }
-    throw new Error("Server returned non-JSON response");
-  };
+      await throwIfResNotOk(res);
+
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return await res.json();
+      }
+      throw new Error("Server returned non-JSON response");
+    };
 
 export const queryClient = new QueryClient({
   defaultOptions: {
