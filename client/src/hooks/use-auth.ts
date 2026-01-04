@@ -183,10 +183,12 @@ export function useAuth() {
     mutationFn: async () => {
       await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
+        credentials: "include",
       });
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user/me"], null);
+      queryClient.clear; // Clear all data
       queryClient.invalidateQueries();
       toast({ title: "Logged out" });
     },
