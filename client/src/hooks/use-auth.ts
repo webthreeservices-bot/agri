@@ -75,7 +75,7 @@ export function useAuth() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/user/me"], data.user);
-      queryClient.invalidateQueries();
+
       toast({
         title: "Welcome back!",
         description: `Connected as ${data.user.walletAddress.slice(0, 6)}...`,
@@ -155,7 +155,7 @@ export function useAuth() {
 
           const data = await res.json();
           queryClient.setQueryData(["/api/user/me"], data.user);
-          queryClient.invalidateQueries();
+
           toast({
             title: "Welcome!",
             description: `Registered as ${data.user.walletAddress.slice(0, 6)}...`,
