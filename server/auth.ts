@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 
 declare global {
   namespace Express {
-    interface User extends SelectUser {}
+    interface User extends SelectUser { }
   }
 }
 
@@ -84,7 +84,7 @@ export function setupAuth(app: Express) {
   app.post("/api/register", async (req, res, next) => {
     try {
       const { walletAddress, signature, sponsorAddress } = req.body;
-      
+
       const existingUser = await storage.getUserByWallet(walletAddress);
       if (existingUser) return res.status(400).json({ message: "User already exists" });
 
@@ -123,31 +123,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/auth/demo", async (req, res, next) => {
-    try {
-      const demoWallet = "0x" + Array(40).fill("0").join("");
-      let user = await storage.getUserByWallet(demoWallet);
-      if (!user) {
-        user = await storage.createUser({
-          walletAddress: demoWallet,
-          sponsorAddress: "0x0000000000000000000000000000000000000000",
-          balance: "1000",
-          packageLevel: 1,
-          dailyBuyAmount: "0",
-          totalLotsBought: 0,
-          directReferrals: 0,
-          upgradePackageWallet: "0",
-          consecutiveTradeDays: 0
-        });
-      }
-      req.login(user, (err) => {
-        if (err) return next(err);
-        res.json({ user, token: req.sessionID });
-      });
-    } catch (err) {
-      next(err);
-    }
-  });
+
 
   app.post("/api/auth/logout", (req, res, next) => {
     req.logout((err) => {
