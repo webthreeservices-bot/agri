@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+
+  /* AgriTrade Theme - Gold/Brass & Deep Green */
+  --background: 40 20% 98%;
+  --foreground: 160 50% 10%;
+  
+  --primary: 160 40% 25%; /* Deep Forest Green from logo */
+  --primary-foreground: 40 30% 95%;
+  
+  --secondary: 40 40% 60%; /* Muted Gold/Brass */
+  --secondary-foreground: 160 50% 10%;
+  
+  --muted: 40 20% 92%;
+  --muted-foreground: 160 20% 40%;
+  
+  --accent: 40 60% 50%; /* Vibrant Gold/Brass for highlights */
+  --accent-foreground: 160 50% 10%;
+  
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  
+  --border: 40 30% 88%;
+  --input: 40 30% 88%;
+  --ring: 160 40% 25%;
+  
+  --card: 0 0% 100%;
+  --card-foreground: 160 50% 10%;
+  
+  --radius: 1rem;
+}
+
+.dark {
+  --background: 160 50% 5%;
+  --foreground: 40 30% 95%;
+  
+  --primary: 40 60% 50%;
+  --primary-foreground: 160 50% 5%;
+  
+  --secondary: 160 30% 15%;
+  --secondary-foreground: 40 30% 95%;
+  
+  --muted: 160 30% 12%;
+  --muted-foreground: 40 10% 70%;
+  
+  --accent: 40 60% 50%;
+  --accent-foreground: 160 50% 5%;
+  
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  
+  --border: 160 30% 15%;
+  --input: 160 30% 15%;
+  --ring: 40 60% 50%;
+  
+  --card: 160 50% 4%;
+  --card-foreground: 40 30% 95%;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight;
+  }
+}
+
+/* Glassmorphism utilities */
+.glass-panel {
+  @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+}
+
+.dark .glass-panel {
+  @apply bg-black/40 backdrop-blur-md border border-white/10 shadow-xl;
+}
+
+/* Gradient Text */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+}
+
+/* Card Hover Effects */
+.hover-card-effect {
+  @apply transition-all duration-300 hover:translate-y-[-4px] hover:shadow-xl hover:shadow-primary/10;
+}
