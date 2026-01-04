@@ -1,28 +1,31 @@
-import { db } from "./db";
+import { db, pool } from "./db";
 import { users, lots, transactions, globalState, systemConfig, autofillDistributions, type User, type InsertUser, type Lot, type Transaction, type SystemConfig } from "@shared/schema";
 import { eq, sql, and, asc } from "drizzle-orm";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 
 export interface IStorage {
+  sessionStore: session.Store;
   // User
   getUser(id: number): Promise<User | undefined>;
   getUserByWallet(walletAddress: string): Promise<User | undefined>;
   getUsers(): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<User>): Promise<User>;
-  
+
   // Lots
   createLot(userId: number, type: number, buyPrice: string, sellPrice: string, packageLevel: number): Promise<Lot>;
   getOldestActiveLot(type: number): Promise<Lot | undefined>;
   getOldestActiveLots(type: number, limit: number): Promise<Lot[]>;
   updateLotStatus(id: number, status: string, soldAt?: Date): Promise<Lot>;
   getUserLots(userId: number): Promise<Lot[]>;
-  
+
   // Transactions
   createTransaction(tx: { userId: number, type: string, amount: string, description?: string, txHash?: string, status?: string }): Promise<Transaction>;
   getUserTransactions(userId: number): Promise<Transaction[]>;
   getPendingWithdrawals(): Promise<Transaction[]>;
   updateTransactionStatus(id: number, status: string): Promise<Transaction>;
-  
+
   // Global State
   getGlobalState(): Promise<{ totalLot1Buys: number, autofillPool: string }>;
   incrementLot1Buys(): Promise<number>;
@@ -39,6 +42,15 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+
+  constructor() {
+    this.sessionStore = new (connectPgSimple(session))({
+      pool,
+      createTableIfMissing: true,
+    });
+  }
+
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
@@ -231,7 +243,7 @@ export class DatabaseStorage implements IStorage {
       .from(lots)
       .where(eq(lots.status, 'active'))
       .groupBy(lots.type);
-    
+
     const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };
     results.forEach((r) => {
       counts[r.type] = r.count;

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, numeric } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, numeric, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -13,7 +13,7 @@ export const users = pgTable("users", {
   packageLevel: integer("package_level").default(0).notNull(), // 0 = None, 1-12
   dailyBuyAmount: numeric("daily_buy_amount", { precision: 20, scale: 2 }).default("0").notNull(),
   lastBuyDate: timestamp("last_buy_date"),
-  totalLotsBought: integer("total_lots_bought").default(0).notNull(), 
+  totalLotsBought: integer("total_lots_bought").default(0).notNull(),
   directReferrals: integer("direct_referrals").default(0).notNull(),
   upgradePackageWallet: numeric("upgrade_package_wallet", { precision: 20, scale: 2 }).default("0").notNull(),
   lastWithdrawalAt: timestamp("last_withdrawal_at"),
@@ -68,6 +68,12 @@ export const systemConfig = pgTable("system_config", {
   withdrawalWallet: text("withdrawal_wallet").default("0xd10f1b960bd66a9cbd48380a545ab637d42ed407").notNull(),
   maxTradesBeforeReferral: integer("max_trades_before_referral").default(225).notNull(),
   referralInterval: integer("referral_interval").default(20).notNull(),
+});
+
+export const session = pgTable("session", {
+  sid: text("sid").primaryKey(),
+  sess: json("sess").notNull(),
+  expire: timestamp("expire", { precision: 6 }).notNull(),
 });
 
 // === RELATIONS ===
