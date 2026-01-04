@@ -12,7 +12,7 @@ export function useTransactions() {
     queryKey: [api.transactions.list.path],
     queryFn: async () => {
       const res = await fetch(`${API_BASE_URL}${api.transactions.list.path}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (!res.ok) throw new Error("Failed to fetch transactions");
       return api.transactions.list.responses[200].parse(await res.json());
@@ -25,9 +25,9 @@ export function useTransactions() {
         method: api.transactions.withdraw.method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(data),
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -62,9 +62,9 @@ export function useTransactions() {
         method: api.transactions.deposit.method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(data),
+        credentials: "include",
       });
       if (!res.ok) throw new Error("Deposit failed");
       return api.transactions.deposit.responses[200].parse(await res.json());
