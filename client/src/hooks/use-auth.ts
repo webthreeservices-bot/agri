@@ -147,6 +147,7 @@ export function useAuth() {
               signature,
               sponsorAddress: sponsorAddress || "0x0000000000000000000000000000000000000000",
             }),
+            credentials: "include",
           });
 
           if (!res.ok) {
@@ -188,7 +189,7 @@ export function useAuth() {
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user/me"], null);
-      queryClient.clear; // Clear all data
+      queryClient.clear(); // Clear all data
       queryClient.invalidateQueries();
       toast({ title: "Logged out" });
     },
