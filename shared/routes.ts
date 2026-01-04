@@ -49,7 +49,7 @@ export const api = {
         type: z.number().int().min(1).max(4),
       }),
       responses: {
-        200: z.object({ 
+        200: z.object({
           lot: z.custom<typeof lots.$inferSelect>(),
           soldLot: z.custom<typeof lots.$inferSelect>().optional(), // If a trigger happened
           message: z.string()
@@ -61,9 +61,9 @@ export const api = {
       method: 'POST' as const,
       path: '/api/trading/upgrade',
       responses: {
-        200: z.object({ 
+        200: z.object({
           user: z.custom<typeof users.$inferSelect>(),
-          message: z.string() 
+          message: z.string()
         }),
         400: errorSchemas.validation,
       },
@@ -98,7 +98,7 @@ export const api = {
     },
     withdraw: {
       method: 'POST' as const,
-      path: '/api/withdraw',
+      path: '/api/transactions/withdraw',
       input: z.object({
         amount: z.number().positive(),
         address: z.string(),
@@ -111,7 +111,7 @@ export const api = {
     // Admin only
     deposit: {
       method: 'POST' as const,
-      path: '/api/admin/deposit',
+      path: '/api/transactions/deposit',
       input: z.object({
         userId: z.number(),
         amount: z.number().positive(),

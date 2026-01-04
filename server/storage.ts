@@ -19,6 +19,8 @@ export interface IStorage {
   getOldestActiveLots(type: number, limit: number): Promise<Lot[]>;
   updateLotStatus(id: number, status: string, soldAt?: Date): Promise<Lot>;
   getUserLots(userId: number): Promise<Lot[]>;
+  getActiveLotCountsByAllTypes(): Promise<Record<number, number>>;
+  getSoldLotCountsByAllTypes(): Promise<Record<number, number>>;
 
   // Transactions
   createTransaction(tx: { userId: number, type: string, amount: string, description?: string, txHash?: string, status?: string }): Promise<Transaction>;
@@ -242,6 +244,19 @@ export class DatabaseStorage implements IStorage {
     const results = await db.select({ type: lots.type, count: sql<number>`count(*)` })
       .from(lots)
       .where(eq(lots.status, 'active'))
+      .groupBy(lots.type);
+
+    const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    results.forEach((r) => {
+      counts[r.type] = r.count;
+    });
+    return counts;
+  }
+
+  async getSoldLotCountsByAllTypes(): Promise<Record<number, number>> {
+    const results = await db.select({ type: lots.type, count: sql<number>`count(*)` })
+      .from(lots)
+      .where(eq(lots.status, 'sold'))
       .groupBy(lots.type);
 
     const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };

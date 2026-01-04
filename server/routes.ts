@@ -33,6 +33,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(lots);
   });
 
+  app.get("/api/trading/queue-counts", async (req, res) => {
+    const active = await storage.getActiveLotCountsByAllTypes();
+    const sold = await storage.getSoldLotCountsByAllTypes();
+
+    // Combining into the structure expected by frontend { 1: { buy: X, sell: Y }, ... }
+    const response: Record<number, { buy: number, sell: number }> = {};
+    for (let i = 1; i <= 4; i++) {
+      response[i] = {
+        buy: active[i] || 0,
+        sell: sold[i] || 0
+      };
+    }
+
+    res.json(response);
+  });
+
   app.get("/api/transactions", requireAuth, async (req, res) => {
     const txs = await storage.getUserTransactions(req.user!.id);
     res.json(txs);
