@@ -25,7 +25,8 @@ export function useAuth() {
         const res = await fetch(`${API_BASE_URL}/api/user/me`, {
           headers: {
             "Accept": "application/json"
-          }
+          },
+          credentials: "include",
         });
         if (res.status === 401) return null;
         if (!res.ok) return null;

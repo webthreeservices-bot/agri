@@ -12,7 +12,7 @@ export function useTrading() {
     queryKey: [api.trading.getLots.path],
     queryFn: async () => {
       const res = await fetch(`${API_BASE_URL}${api.trading.getLots.path}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (!res.ok) throw new Error("Failed to fetch lots");
       return api.trading.getLots.responses[200].parse(await res.json());
@@ -25,9 +25,9 @@ export function useTrading() {
         method: api.trading.buyLot.method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(data),
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -72,7 +72,7 @@ export function useTrading() {
     mutationFn: async () => {
       const res = await fetch(`${API_BASE_URL}${api.trading.upgrade.path}`, {
         method: api.trading.upgrade.method,
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
 
       if (!res.ok) {
