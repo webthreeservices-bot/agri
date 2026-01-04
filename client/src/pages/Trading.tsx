@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@shared/routes";
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "@/lib/queryClient";
 
 interface QueueData {
   buy: number;
@@ -23,7 +24,7 @@ const NFT_IMAGES = [
 const getLotPrices = (level: number) => {
   const lvl = Math.max(1, level);
   const multiplier = lvl;
-  
+
   return [
     { type: 1, price: 10 * multiplier },
     { type: 2, price: 15 * multiplier },
@@ -35,17 +36,17 @@ const getLotPrices = (level: number) => {
 export default function Trading() {
   const { user } = useAuth();
   const { buyLot, isBuying } = useTrading();
-  const [queueCounts, setQueueCounts] = useState<Record<number, QueueData>>({ 
-    1: { buy: 0, sell: 0 }, 
-    2: { buy: 0, sell: 0 }, 
-    3: { buy: 0, sell: 0 }, 
-    4: { buy: 0, sell: 0 } 
+  const [queueCounts, setQueueCounts] = useState<Record<number, QueueData>>({
+    1: { buy: 0, sell: 0 },
+    2: { buy: 0, sell: 0 },
+    3: { buy: 0, sell: 0 },
+    4: { buy: 0, sell: 0 }
   });
 
   const queueQuery = useQuery({
     queryKey: [api.trading.getQueueCounts.path],
     queryFn: async () => {
-      const res = await fetch(api.trading.getQueueCounts.path);
+      const res = await fetch(`${API_BASE_URL}${api.trading.getQueueCounts.path}`);
       if (!res.ok) throw new Error("Failed to fetch queue counts");
       const data = await res.json();
       return data;
@@ -82,7 +83,7 @@ export default function Trading() {
           <div>
             <h3 className="font-bold text-orange-800">Account Activation Required</h3>
             <p className="text-sm text-orange-700 mt-1">
-              You must purchase a package to start trading. 
+              You must purchase a package to start trading.
               <Link href="/" className="underline ml-1 font-semibold hover:text-orange-900">Go to Dashboard</Link> to upgrade.
             </p>
           </div>
@@ -91,17 +92,16 @@ export default function Trading() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {lotOptions.map((lot) => (
-          <div 
+          <div
             key={lot.type}
-            className={`bg-blue-50 rounded-2xl p-6 flex flex-col items-center text-center transition-all duration-300 ${
-              !canBuy ? 'opacity-50 pointer-events-none' : 'hover:shadow-lg'
-            }`}
+            className={`bg-blue-50 rounded-2xl p-6 flex flex-col items-center text-center transition-all duration-300 ${!canBuy ? 'opacity-50 pointer-events-none' : 'hover:shadow-lg'
+              }`}
             data-testid={`card-lot-${lot.type}`}
           >
             {/* NFT Image */}
             <div className="w-32 h-32 rounded-xl overflow-hidden mb-4 bg-white border-2 border-slate-200">
-              <img 
-                src={NFT_IMAGES[lot.type - 1]} 
+              <img
+                src={NFT_IMAGES[lot.type - 1]}
                 alt={`Dragon NFT ${lot.type}`}
                 className="w-full h-full object-cover"
               />
@@ -116,7 +116,7 @@ export default function Trading() {
             </div>
 
             {/* Buy Button */}
-            <Button 
+            <Button
               className="w-24 bg-amber-400 text-slate-900 hover:bg-amber-500 font-bold mb-3 h-10"
               onClick={() => buyLot({ type: lot.type as any })}
               disabled={isBuying || !canBuy}

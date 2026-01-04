@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type WithdrawRequest } from "@shared/routes";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/queryClient";
 
 export function useTransactions() {
   const queryClient = useQueryClient();
@@ -10,7 +11,7 @@ export function useTransactions() {
   const transactionsQuery = useQuery({
     queryKey: [api.transactions.list.path],
     queryFn: async () => {
-      const res = await fetch(api.transactions.list.path, {
+      const res = await fetch(`${API_BASE_URL}${api.transactions.list.path}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to fetch transactions");
@@ -20,11 +21,11 @@ export function useTransactions() {
 
   const withdrawMutation = useMutation({
     mutationFn: async (data: WithdrawRequest) => {
-      const res = await fetch(api.transactions.withdraw.path, {
+      const res = await fetch(`${API_BASE_URL}${api.transactions.withdraw.path}`, {
         method: api.transactions.withdraw.method,
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(data),
       });
@@ -57,11 +58,11 @@ export function useTransactions() {
 
   const depositMutation = useMutation({
     mutationFn: async (data: { userId: number, amount: number }) => {
-      const res = await fetch(api.transactions.deposit.path, {
+      const res = await fetch(`${API_BASE_URL}${api.transactions.deposit.path}`, {
         method: api.transactions.deposit.method,
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(data),
       });

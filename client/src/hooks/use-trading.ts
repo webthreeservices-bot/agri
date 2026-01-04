@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl, type BuyLotRequest } from "@shared/routes";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/queryClient";
 
 export function useTrading() {
   const queryClient = useQueryClient();
@@ -10,7 +11,7 @@ export function useTrading() {
   const lotsQuery = useQuery({
     queryKey: [api.trading.getLots.path],
     queryFn: async () => {
-      const res = await fetch(api.trading.getLots.path, {
+      const res = await fetch(`${API_BASE_URL}${api.trading.getLots.path}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to fetch lots");
@@ -20,11 +21,11 @@ export function useTrading() {
 
   const buyLotMutation = useMutation({
     mutationFn: async (data: BuyLotRequest) => {
-      const res = await fetch(api.trading.buyLot.path, {
+      const res = await fetch(`${API_BASE_URL}${api.trading.buyLot.path}`, {
         method: api.trading.buyLot.method,
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(data),
       });
@@ -43,7 +44,7 @@ export function useTrading() {
       queryClient.invalidateQueries({ queryKey: [api.trading.getQueueCounts.path] });
       queryClient.invalidateQueries({ queryKey: [api.transactions.list.path] });
       queryClient.invalidateQueries({ queryKey: [api.auth.me.path] });
-      
+
       toast({
         title: "Purchase Successful!",
         description: data.message,
@@ -69,7 +70,7 @@ export function useTrading() {
 
   const upgradeMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(api.trading.upgrade.path, {
+      const res = await fetch(`${API_BASE_URL}${api.trading.upgrade.path}`, {
         method: api.trading.upgrade.method,
         headers: { Authorization: `Bearer ${token}` },
       });
