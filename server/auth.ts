@@ -20,9 +20,10 @@ export function setupAuth(app: Express) {
     store: storage.sessionStore,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: true, // Always true for cross-site (Render handles SSL)
+      sameSite: "none", // Required for cross-site cookies (Hostinger -> Render)
     },
+    proxy: true, // Required for secure cookies behind proxy
   };
 
   if (process.env.NODE_ENV === "production") {
